@@ -47,11 +47,12 @@
 
 
         function calculate(){
+            exchangeRate = 2
             const price = document.getElementById("price").value * exchangeRate;
             const weight = document.getElementById("weight").value;
-            const shipping = 3;      //consider 4,550 yen for 2 KG (per gram) 30 per KG
+            const shipping = 4;      //consider 4,550 yen for 2 KG (per gram) 30 per KG
             const product_shippping = ((shipping * parseFloat(weight)) * exchangeRate)+150;
-            const profit = price*0.28;
+            const profit = price*0.35;
 
             const add = document.getElementById("add").value
             const minus = document.getElementById("minus").value
