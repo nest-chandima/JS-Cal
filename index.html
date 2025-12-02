@@ -1,86 +1,72 @@
 <html>
     <head>
-        <title>Price Calculator</title>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        Price Calculator
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     </head>
 
-    <body class="p-4">
 
-        <!-- LKR PRICE -->
-        <h4 class="alert alert-primary">
-            Price in LKR : <span id="result"></span>
-        </h4>
-
-        <h6 class="h4">
-            <span>Current JPY(LKR) <span id="rate"></span></span>
-        </h6>
-
+    <body>
+        <h4 class="alert alert-primary"> Price in LKR :  <span id="result"></span></h4>
+        <h6 class="h4"><span>Currunt JPY(LKR) <span id="rate"></span> </span></h6>
         <form class="form" style="width: 80vw;" onkeyup="calculate()">
-            <input class="form-control my-2" type="number" name="price" id="price" placeholder="Price">
-            <input class="form-control my-2" type="number" name="weight" id="weight" placeholder="Weight in grams">
-            <input class="form-control my-2" type="number" name="add" id="add" value="0" placeholder="Additional Price">
-            <input class="form-control my-2" type="number" name="minus" id="minus" value="0" placeholder="Discount Price">
+            <input class="input" type="number" name="price" id="price" placeholder="Price">
+            <input class="input" type="number" name="weight" id="weight" placeholder="Weight in grams">
+            <input class="input" type="number" name="add" id="add" value=0 placeholder="Additional Price">
+            <input class="input" type="number" name="minus" id="minus" value=0 placeholder="Discount Price">
+            
+            <!-- <button >Calculate</button> -->
         </form>
-
-        <hr>
-
-        <!-- NEW ROYJAPAN PRICE -->
-        <h4 class="alert alert-success">
-            RoyJapan Price (USD): <span id="roy"></span>
-        </h4>
-
     </body>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script>
 
-        let exchangeRate = 0;
 
-        const apiKey = '47eeb9bea1f2b868a74db39b';
-        const url = `https://v6.exchangerate-api.com/v6/${apiKey}/latest/JPY`;
+
+        const apiKey = '47eeb9bea1f2b868a74db39b'; // Replace with your actual API key
+        const url = `https://v6.exchangerate-api.com/v6/${apiKey}/latest/JPY`; // API endpoint for JPY
+
 
         fetch(url)
-            .then(res => res.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
             .then(data => {
-                exchangeRate = data.conversion_rates.LKR;
+                exchangeRate = data.conversion_rates.LKR; // Access the LKR rate
                 document.getElementById("rate").textContent = exchangeRate;
+                // console.log(`Current exchange rate from JPY to LKR: ${exchangeRate}`);
+                // lkrRate = exchangeRate;
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
             });
 
-        function calculate() {
 
-            // --------------------
-            // Original LKR Calculation
-            // --------------------
-            const usedRate = 2; // your manual override
+        function calculate(){
+            exchangeRate = 2
+            const price = document.getElementById("price").value * exchangeRate;
+            const weight = document.getElementById("weight").value;
+            const shipping = 4;      //consider 4,550 yen for 2 KG (per gram) 30 per KG
+            const product_shippping = ((shipping * parseFloat(weight)) * exchangeRate)+150;
+            const profit = price*0.40;
 
-            const price = parseFloat(document.getElementById("price").value) || 0;
-            const weight = parseFloat(document.getElementById("weight").value) || 0;
-            const add = parseFloat(document.getElementById("add").value) || 0;
-            const minus = parseFloat(document.getElementById("minus").value) || 0;
+            const add = document.getElementById("add").value
+            const minus = document.getElementById("minus").value
 
-            const shipping = 4;
-            const product_shipping = ((shipping * weight) * usedRate) + 150;
-            const profit = price * 0.40;
 
-            const listedPrice = ((price + profit ) * usedRate) + product_shipping  + add - minus;
+            const listedPrice =  price + product_shippping + profit + parseFloat(add) - parseFloat(minus);
+
+
+
+
 
             document.getElementById("result").textContent = listedPrice;
-
-
-            // --------------------
-            // NEW RoyJapan Price (USD)
-            // --------------------
-            const serviceFee = price * 0.14;
-            const profit2 = price * 0.35;
-            const usdRate = 143;
-
-            const royJapanPrice = (price + serviceFee + profit2) / usdRate;
-
-            document.getElementById("roy").textContent = royJapanPrice.toFixed(2);
+            console.log(price);
         }
-
+        
     </script>
 </html>
-
-
