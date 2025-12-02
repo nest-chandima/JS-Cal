@@ -63,7 +63,7 @@
             const product_shipping = ((shipping * weight) * usedRate) + 150;
             const profit = price * 0.40;
 
-            const listedPrice = price + product_shipping + profit + add - minus;
+            const listedPrice = ((price + profit ) * usedRate) + product_shipping  + add - minus;
 
             document.getElementById("result").textContent = listedPrice;
 
