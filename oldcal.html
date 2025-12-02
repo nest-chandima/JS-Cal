@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Price Calculator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+</head>
+
+<body class="p-3">
+
+    <h4 class="alert alert-primary">
+        Price in LKR : <span id="result"></span>
+    </h4>
+
+    <h6 class="h4">
+        Currunt JPY(LKR): <span id="rate"></span>
+    </h6>
+
+    <form class="form mt-3" style="width: 80vw;" onkeyup="calculate()">
+        <input class="form-control mb-2" type="number" id="price" placeholder="Price">
+        <input class="form-control mb-2" type="number" id="weight" placeholder="Weight in grams">
+        <input class="form-control mb-2" type="number" id="add" value="0" placeholder="Additional Price">
+        <input class="form-control mb-2" type="number" id="minus" value="0" placeholder="Discount Price">
+    </form>
+
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"></script>
+
+<script>
+
+    const apiKey = '47eeb9bea1f2b868a74db39b';
+    const url = `https://v6.exchangerate-api.com/v6/${apiKey}/latest/JPY`;
+
+    fetch(url)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network error');
+            }
+            return response.json();
+        })
+        .then(data => {
+            let exchangeRate = data.conversion_rates.LKR;
+            document.getElementById("rate").textContent = exchangeRate;
+        })
+        .catch(error => {
+            console.error('Fetch problem:', error);
+        });
+
+    function calculate() {
+
+        let exchangeRate = 2; // your manual override
+
+        const priceInput = parseFloat(document.getElementById("price").value) || 0;
+        const weight = parseFloat(document.getElementById("weight").value) || 0;
+
+        const price = priceInput * exchangeRate;
+
+        const shipping = 4;
+        const product_shipping = ((shipping * weight) * exchangeRate) + 150;
+
+        const profit = price * 0.40;
+
+        const add = parseFloat(document.getElementById("add").value) || 0;
+        const minus = parseFloat(document.getElementById("minus").value) || 0;
+
+        const listedPrice = price + product_shipping + profit + add - minus;
+
+        document.getElementById("result").textContent = listedPrice;
+    }
+
+</script>
+
+</html>
